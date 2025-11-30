@@ -1,0 +1,224 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden; 
+}
+
+/* Стиль для заголовка и кнопок */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; 
+    padding: 10px 15px 0 15px; 
+}
+
+.header-section h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.mode-buttons button {
+    display: block; 
+    width: 150px; 
+    margin-bottom: 5px; 
+    padding: 8px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: bold;
+}
+
+/* Стиль для активной кнопки режима */
+.mode-buttons button.active {
+    background-color: #3399ff;
+    color: white;
+    border-color: #0077cc;
+}
+
+.mode-buttons button:hover {
+    background-color: #e0e0e0;
+}
+.mode-buttons button.active:hover {
+    background-color: #0077cc;
+}
+
+/* Общий стиль для каждой строки-позиции */
+.position-row {
+    display: flex;
+    border-bottom: 1px solid #333; 
+}
+
+/* Стили для строк без расчета (менеджер/заказчик) */
+.info-row {
+    display: flex;
+    background-color: #fffacd; 
+    padding: 15px;
+    border-bottom: 1px solid #333;
+}
+
+.info-label {
+    font-weight: bold;
+    flex-shrink: 0; 
+    margin-right: 15px;
+    width: 180px; 
+}
+
+.info-input {
+    flex-grow: 1; 
+    padding: 8px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+/* ----- Стили для расчета (Доставка, Подрамник, Опалубка, Плитка, Работа) ----- */
+
+/* Левая сторона: Название позиции и поле ввода (ЖЕЛТЫЙ) */
+.left-column {
+    flex: 2; 
+    background-color: #fffacd; 
+    padding: 15px;
+    display: flex;
+    flex-direction: column; 
+}
+
+.position-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: flex; 
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Стили для кнопок-множителей доставки */
+.delivery-multiplier-buttons button {
+    background-color: #ffcc00; 
+    border: 1px solid #ffaa00;
+    border-radius: 4px;
+    padding: 3px 6px;
+    margin-left: 5px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.delivery-multiplier-buttons button:hover {
+    background-color: #ffdd44;
+}
+
+/* Стиль для активной кнопки-множителя */
+.delivery-multiplier-buttons button.active {
+    background-color: #3399ff;
+    color: white;
+    border-color: #0077cc;
+}
+
+/* Стили для групп полей */
+.formwork-group, .granit-group, .ceramic-group, .granit-work-group, .ceramic-work-group {
+    border: 1px solid #e0e0e0; 
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 4px;
+    background-color: #fff;
+}
+.formwork-group label, .granit-group label, .ceramic-group label, .granit-work-group label, .ceramic-work-group label {
+    font-weight: normal; 
+    display: block; 
+    margin-top: 8px;
+    font-size: 0.9em;
+}
+.formwork-group input, .granit-group input, .ceramic-group input, .granit-work-group input, .ceramic-work-group input {
+    margin-top: 2px;
+}
+
+
+.input-field, .select-field {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+/* Стиль для чекбокс-контейнера (Балки, Отверстия, ФИО+Даты, Эпитафия) */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0; /* Отступ внутри колонки */
+}
+.checkbox-container label {
+    font-weight: bold;
+    margin: 0;
+    flex-grow: 1; /* Позволяет надписи занять доступное место */
+}
+.checkbox-container input[type="checkbox"] {
+    width: 20px; /* Увеличим размер чекбокса */
+    height: 20px;
+    margin-right: 0;
+    cursor: pointer;
+    flex-shrink: 0; /* Не позволяет чекбоксу сжиматься */
+}
+
+/* Правая сторона: Результат расчета (ГОЛУБОЙ) */
+.right-column {
+    flex: 1; 
+    background-color: #add8e6; 
+    padding: 15px;
+    display: flex;
+    align-items: center; 
+    justify-content: flex-end; 
+    flex-direction: column; 
+}
+
+.result-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #000080; 
+    white-space: nowrap; 
+    margin-bottom: 0; 
+}
+
+/* Стиль для договорной цены (красный) */
+.result-display.contract-price {
+    color: red;
+}
+
+/* Детализация площади под стоимостью */
+.result-subtext {
+    font-size: 0.7em;
+    font-weight: normal;
+    display: block;
+    color: #555; /* Дефолтный цвет для деталей площади */
+    text-align: right;
+    margin-top: 3px;
+}
+/* Новый стиль для договорной цены в подтексте */
+.result-subtext.contract-subtext {
+    color: red;
+    font-weight: bold;
+}
+
+
+/* Секция общей стоимости */
+.total-section {
+    display: flex;
+    justify-content: flex-end; 
+    padding: 15px;
+    background-color: #f0f0f0;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.total-section .total-label {
+    margin-right: 10px;
+}
