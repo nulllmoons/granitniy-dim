@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Анкета для расчета заказа</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden; 
+        }
+
+        /* Стиль для заголовка и кнопок */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; 
+            padding: 10px 15px 0 15px; 
+        }
+
+        .header-section h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .mode-buttons button {
+            display: block; 
+            width: 150px; 
+            margin-bottom: 5px; 
+            padding: 8px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: bold;
+        }
+        
+        /* Стиль для активной кнопки режима */
+        .mode-buttons button.active {
+            background-color: #3399ff;
+            color: white;
+            border-color: #0077cc;
+        }
+        
+        .mode-buttons button:hover {
+            background-color: #e0e0e0;
+        }
+        .mode-buttons button.active:hover {
+            background-color: #0077cc;
+        }
+
+        /* Общий стиль для каждой строки-позиции */
+        .position-row {
+            display: flex;
+            border-bottom: 1px solid #333; 
+        }
+
+        /* Стили для строк без расчета (менеджер/заказчик) */
+        .info-row {
+            display: flex;
+            background-color: #fffacd; 
+            padding: 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            flex-shrink: 0; 
+            margin-right: 15px;
+            width: 180px; 
+        }
+        
+        .info-input {
+            flex-grow: 1; 
+            padding: 8px;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        /* ----- Стили для расчета (Доставка, Подрамник, Опалубка, Плитка, Работа) ----- */
+
+        /* Левая сторона: Название позиции и поле ввода (ЖЕЛТЫЙ) */
+        .left-column {
+            flex: 2; 
+            background-color: #fffacd; 
+            padding: 15px;
+            display: flex;
+            flex-direction: column; 
+        }
+
+        .position-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex; 
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* Стили для кнопок-множителей доставки */
+        .delivery-multiplier-buttons button {
+            background-color: #ffcc00; 
+            border: 1px solid #ffaa00;
+            border-radius: 4px;
+            padding: 3px 6px;
+            margin-left: 5px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+
+        .delivery-multiplier-buttons button:hover {
+            background-color: #ffdd44;
+        }
+        
+        /* Стиль для активной кнопки-множителя */
+        .delivery-multiplier-buttons button.active {
+            background-color: #3399ff;
+            color: white;
+            border-color: #0077cc;
+        }
+
+        /* Стили для групп полей */
+        .formwork-group, .granit-group, .ceramic-group, .granit-work-group, .ceramic-work-group {
+            border: 1px solid #e0e0e0; 
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .formwork-group label, .granit-group label, .ceramic-group label, .granit-work-group label, .ceramic-work-group label {
+            font-weight: normal; 
+            display: block; 
+            margin-top: 8px;
+            font-size: 0.9em;
+        }
+        .formwork-group input, .granit-group input, .ceramic-group input, .granit-work-group input, .ceramic-work-group input {
+            margin-top: 2px;
+        }
+
+
+        .input-field, .select-field {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        
+        /* Стиль для чекбокс-контейнера (Балки, Отверстия, ФИО+Даты, Эпитафия) */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0; /* Отступ внутри колонки */
+        }
+        .checkbox-container label {
+            font-weight: bold;
+            margin: 0;
+            flex-grow: 1; /* Позволяет надписи занять доступное место */
+        }
+        .checkbox-container input[type="checkbox"] {
+            width: 20px; /* Увеличим размер чекбокса */
+            height: 20px;
+            margin-right: 0;
+            cursor: pointer;
+            flex-shrink: 0; /* Не позволяет чекбоксу сжиматься */
+        }
+        
+        /* Правая сторона: Результат расчета (ГОЛУБОЙ) */
+        .right-column {
+            flex: 1; 
+            background-color: #add8e6; 
+            padding: 15px;
+            display: flex;
+            align-items: center; 
+            justify-content: flex-end; 
+            flex-direction: column; 
+        }
+
+        .result-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #000080; 
+            white-space: nowrap; 
+            margin-bottom: 0; 
+        }
+
+        /* Стиль для договорной цены (красный) */
+        .result-display.contract-price {
+            color: red;
+        }
+
+        /* Детализация площади под стоимостью */
+        .result-subtext {
+            font-size: 0.7em;
+            font-weight: normal;
+            display: block;
+            color: #555; /* Дефолтный цвет для деталей площади */
+            text-align: right;
+            margin-top: 3px;
+        }
+        /* Новый стиль для договорной цены в подтексте */
+        .result-subtext.contract-subtext {
+            color: red;
+            font-weight: bold;
+        }
+
+
+        /* Секция общей стоимости */
+        .total-section {
+            display: flex;
+            justify-content: flex-end; 
+            padding: 15px;
+            background-color: #f0f0f0;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .total-section .total-label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="header-section">
+            <h1>Анкета заказа</h1>
+            <div class="mode-buttons">
+                <button type="button" id="btn-exact" data-mode="exact" class="active">точный расчёт</button>
+                <button type="button" id="btn-round" data-mode="round">с округлением</button>
+            </div>
+        </div>
+        <div class="info-row">
+            <label for="manager-info" class="info-label">ФИО менеджера/тел.:</label>
+            <input type="text" id="manager-info" class="info-input" placeholder="Например: Татьяна / 0936206565">
+        </div>
+
+        <div class="info-row">
+            <label for="client-info" class="info-label">ФИО заказчика/тел.:</label>
+            <input type="text" id="client-info" class="info-input" placeholder="Например: Иванов / 0505555555">
+        </div>
+
+        <div class="position-row">
+            <div class="left-column">
+                <label for="input-delivery" class="position-label">
+                    Доставка на кладбище:
+                    <span class="delivery-multiplier-buttons">
+                        <button type="button" data-multiplier="1" class="active">1x</button>
+                        <button type="button" data-multiplier="2">2x</button>
+                        <button type="button" data-multiplier="3">3x</button>
+                        <button type="button" data-multiplier="4">4x</button>
+                    </span>
+                </label>
+                <input type="text" id="input-delivery" class="input-field" 
+                       list="delivery-locations" 
+                       placeholder="Введите название или километраж (км)">
+                <input type="hidden" id="delivery-multiplier" value="1"> 
+            </div>
+            <div class="right-column">
+                <span id="result-delivery" class="result-display">0 грн</span>
+            </div>
+        </div>
+        
+        <datalist id="delivery-locations">
+            <option value="Мешковка"></option>
+            <option value="Балабановка"></option>
+            <option value="Жукова"></option>
+            <option value="Матвеевка"></option>
+            <option value="Терновка"></option>
+            <option value="Варваровка"></option>
+            <option value="Капустина балка"></option>
+            <option value="Лиманы"></option>
+            <option value="Полигон"></option>
+            <option value="Радсад"></option>
+            <option value="Баловное"></option>
+        </datalist>
+
+        <div class="position-row">
+            <div class="left-column">
+                <label for="input-podramnik" class="position-label">Подрамник:</label>
+                <input type="text" id="input-podramnik" class="input-field" 
+                       list="podramnik-options" 
+                       placeholder="Например: без плитки">
+            </div>
+            <div class="right-column">
+                <span id="result-podramnik" class="result-display">0 грн</span>
+            </div>
+        </div>
+        
+        <datalist id="podramnik-options">
+            <option value="без плитки"></option>
+            <option value="облиц керамика верх"></option>
+            <option value="облиц керамика верх+торцы"></option>
+            <option value="без окна облиц керамика верх+торцы"></option>
+            <option value="облиц гранит черный верх"></option>
+            <option value="облиц гранит черный верх+торцы"></option>
+            <option value="облицовка гранит зеленый верх+торцы"></option>
+        </datalist>
+
+        <div class="position-row">
+            <div class="left-column">
+                <div class="checkbox-container">
+                    <label for="input-balki">Балки:</label>
+                    <input type="checkbox" id="input-balki"> 
+                </div>
+            </div>
+            <div class="right-column">
+                <span id="result-balki" class="result-display">0 грн</span>
+            </div>
+        </div>
+        
+        <div class="position-row">
+            <div class="left-column">
+                <div class="checkbox-container">
+                    <label for="input-otverstia">Отверстия:</label>
+                    <input type="checkbox" id="input-otverstia"> 
+                </div>
+            </div>
+            <div class="right-column">
+                <span id="result-otverstia" class="result-display">0 грн</span>
+            </div>
+        </div>
+        
+        <div class="position-row">
+            <div class="left-column">
+                <label for="input-podramnik-install" class="position-label">Установка подрамника:</label>
+                <select id="input-podramnik-install" class="select-field">
+                    <option value="">Не выбрано</option>
+                    <option value="без плитки">Без плитки</option>
+                    <option value="с керамической плиткой">С керамической плиткой</option>
+                    <option value="с гранитной плиткой">С гранитной плиткой</option>
+                </select>
+            </div>
+            <div class="right-column">
+                <span id="result-podramnik-install" class="result-display">0 грн</span>
+            </div>
+        </div>
+
+        <div class="position-row">
+            <div class="left-column">
+                <label class="position-label">Опалубка/Отмостка:</label>
+                
+                <div class="formwork-group">
+                    <label for="input-formwork-height">1. Высота (Опалубка 0,2 м / Отмостка 0,1 м):</label>
+                    <input type="text" id="input-formwork-height" class="input-field" 
+                           list="formwork-heights" 
+                           placeholder="Например: 0,2 м">
+                    
+                    <label for="input-formwork-size">2. Общий размер (Д х Ш):</label>
+                    <input type="text" id="input-formwork-size" class="input-field" 
+                           placeholder="Например: 2,4 м на 1,5 м">
+
+                    <label for="input-formwork-window">3. Размер окна (Д х Ш):</label>
+                    <input type="text" id="input-formwork-window" class="input-field" 
+                           placeholder="Например: 1,65 м на 0,9 м">
+                </div>
+            </div>
+            <div class="right-column">
+                <span id="result-formwork" class="result-display">0 грн</span>
+            </div>
+        </div>
+
+        <datalist id="formwork-heights">
+            <option value="Опалубка 0,2 м"></option>
+            <option value="Отмостка 0,1 м"></option>
+        </datalist>
+        
+        <div class="position-row">
+            <div class="left-column">
+                <label for="input-shuba-shtukaturka" class="position-label">Шуба/Штукатурка торцов фундамента:</label>
+                <select id="input-shuba-shtukaturka" class="input-field">
+                    <option value="">Не выбрано</option>
+                    <option value="Шуба">Шуба (600 грн/м²)</option>
+                    <option value="Штукатурка">Штукатурка (500 грн/м²)</option>
+                </select>
+            </div>
+            <div class="right-column">
+                <span id="result-shuba-shtukaturka" class="result-display">0 грн</span>
+            </div>
+        </div>
+
+        <div class="position-row">
+            <div class="left-column">
+                <label class="position-label">Плитка - гранит:</label>
+                
+                <div class="granit-group">
+                    <label for="input-granit-top">1. Верх:</label>
+                    <input type="text" id="input-granit-top" class="input-field" 
+                           list="granit-options" 
+                           placeholder="Выберите или введите тип гранита">
+                    
+                    <label for="input-granit-side">2. Торец:</label>
+                    <input type="text" id="input-granit-side" class="input-field" 
+                           list="granit-options" 
+                           placeholder="Выберите или введите тип гранита">
+                </div>
+            </div>
+            <div class="right-column">
+                <span id="result-granit" class="result-display">0 грн</span>
+                <span id="result-granit-detail" class="result-subtext">Верх: 0 м², Торец: 0 м²</span>
+            </div>
+        </div>
+
+        <datalist id="granit-options">
+            <option value="Букинский чёрный"></option>
+            <option value="Покостовка серый"></option>
+            <option value="Токовский"></option>
+            <option value="Лезник рыжий"></option>
+        </datalist>
+
+        <div class="position-row">
+            <div class="left-column">
+                <label class="position-label">Работа по плитке - гранит:</label>
+                
+                <div class="granit-work-group">
+                    <label for="input-granit-work-top">1. Работа верх (по материалу):</label>
+                    <input type="text" id="input-granit-work-top" class="input-field" 
+                           list="granit-options" 
+                           placeholder="Выберите или введите тип гранита">
+                    
+                    <label for="input-granit-work-side">2. Работа торец (по материалу):</label>
+                    <input type="text" id="input-granit-work-side" class="input-field" 
+                           list="granit-options" 
+                           placeholder="Выберите или введите тип гранита">
+                </div>
+            </div>
+            <div class="right-column">
+                <span id="result-granit-work" class="result-display">0 грн</span>
+                <span id="result-granit-work-detail" class="result-subtext">Верх: 0 м², Торец: 0 м²</span>
+            </div>
+        </div>
+
+        <div class="position-row">
+            <div class="left-column">
+                <label class="position-label">Плитка - керамика:</label>
+                
+                <div class="ceramic-group">
+                    <label for="input-ceramic-top">1. Верх:</label>
+                    <input type="text" id="input-ceramic-top" class="input-field" 
+                           list="ceramic-options" 
+                           placeholder="Выберите или введите тип керамики">
+                    
+                    <label for="input-ceramic-side">2. Торец:</label>
+                    <input type="text" id="input-ceramic-side" class="input-field" 
+                           list="ceramic-options" 
+                           placeholder="Выберите или введите тип керамики">
+                </div>
+            </div>
+            <div class="right-column">
+                <span id="result-ceramic" class="result-display">0 грн</span>
+                <span id="result-ceramic-detail" class="result-subtext">Верх: 0 м², Торец: 0 м²</span>
+            </div>
+        </div>
+
+        <datalist id="ceramic-options">
+            <option value="Грес чёрный"></option>
+            <option value="Грес серый"></option>
+            <option value="Грес Покостовка"></option>
+            <option value="Грес Капустянский"></option>
+        </datalist>
+
+        <div class="position-row">
+            <div class="left-column">
+                <label class="position-label">Работа по плитке - керамика:</label>
+                
+                <div class="ceramic-work-group">
+                    <label for="input-ceramic-work-top">1. Работа верх (по материалу):</label>
+                    <input type="text" id="input-ceramic-work-top" class="input-field" 
+                           list="ceramic-options" 
+                           placeholder="Выберите или введите тип керамики">
+                    
+                    <label for="input-ceramic-work-side">2. Работа торец (по материалу):</label>
+                    <input type="text" id="input-ceramic-work-side" class="input-field" 
+                           list="ceramic-options" 
+                           placeholder="Выберите или введите тип керамики">
+                </div>
+            </div>
+            <div class="right-column">
+                <span id="result-ceramic-work" class="result-display">0 грн</span>
+                <span id="result-ceramic-work-detail" class="result-subtext">Верх: 0 м², Торец: 0 м²</span>
+            </div>
+        </div>
+        
+        <div class="position-row">
+            <div class="left-column">
+                <label for="input-plita" class="position-label">Плита:</label>
+                <select id="input-plita" class="input-field">
+                    <option value="">Не выбрано</option>
+                    <option value="60-60-5">60-60-5</option>
+                    <option value="80-40-5">80-40-5</option>
+                    <option value="100-50-5">100-50-5</option>
+                    <option value="100-60-5">100-60-5</option>
+                    <option value="120-60-5">120-60-5</option>
+                    <option value="130-60-5">130-60-5</option>
+                    <option value="100-30-8">100-30-8</option>
+                    <option value="60-60-8">60-60-8</option>
+                    <option value="80-40-8">80-40-8</option>
+                    <option value="100-50-8">100-50-8</option>
+                    <option value="100-60-8">100-60-8</option>
+                    <option value="120-60-8">120-60-8</option>
+                    <option value="130-60-8">130-60-8</option>
+                    <option value="140-60-8">140-60-8</option>
+                    <option value="150-60-8">150-60-8</option>
+                    <option value="160-60-8">160-60-8</option>
+                    <option value="100-70-8">100-70-8</option>
+                    <option value="120-70-8">120-70-8</option>
+                    <option value="130-70-8">130-70-8</option>
+                    <option value="140-70-8">140-70-8</option>
+                    <option value="150-70-8">150-70-8</option>
+                    <option value="160-70-8">160-70-8 (договорная)</option>
+                    <option value="170-70-8">170-70-8 (договорная)</option>
+                    <option value="120-80-8">120-80-8</option>
+                    <option value="130-80-8">130-80-8</option>
+                    <option value="140-80-8">140-80-8</option>
+                    <option value="150-80-8">150-80-8</option>
+                    <option value="150-120-8">150-120-8 (договорная)</option>
+                    <option value="180-90-8">180-90-8 (договорная)</option>
+                    <option value="200-100-8">200-100-8 (договорная)</option>
+                </select>
+            </div>
+            <div class="right-column">
+                <span id="result-plita" class="result-display">0 грн</span>
+            </div>
+        </div>
+        <div class="position-row">
+            <div class="left-column">
+                <label for="input-monument-install" class="position-label">Установка памятника:</label>
+                <select id="input-monument-install" class="select-field">
+                    <option value="">Не выбрано</option>
+                    <option value="до 110-50-8">до 110-50-8</option>
+                    <option value="до 130-60-8">до 130-60-8</option>
+                    <option value="до 140-70-8 на фундамент">до 140-70-8 на фундамент</option>
+                    <option value="гранитного комплекса">гранитного комплекса</option>
+                    <option value="произведённые работы">произведённые работы</option>
+                </select>
+            </div>
+            <div class="right-column">
+                <span id="result-monument-install" class="result-display">0 грн</span>
+                <span id="result-monument-install-subtext" class="result-subtext"></span>
+            </div>
+        </div>
+        <div class="position-row">
+            <div class="left-column">
+                <label for="input-tumba" class="position-label">Тумба:</label>
+                <select id="input-tumba" class="input-field">
+                    <option value="">Не выбрано</option>
+                    <option value="50-20-15">50-20-15</option>
+                    <option value="60-20-15">60-20-15</option>
+                    <option value="70-20-15">70-20-15</option>
+                    <option value="70-20-20">70-20-20</option>
+                    <option value="80-20-20">80-20-20</option>
+                    <option value="100-20-20">100-20-20</option>
+                    <option value="120-20-20">120-20-20</option>
+                    <option value="70-30-20">70-30-20</option>
+                </select>
+            </div>
+            <div class="right-column">
+                <span id="result-tumba" class="result-display">0 грн</span>
+            </div>
+        </div>
+        <div class="position-row">
+            <div class="left-column">
+                <label for="input-portrait" class="position-label">Портрет:</label>
+                <select id="input-portrait" class="input-field">
+                    <option value="">Не выбрано</option>
+                    <option value="на плите до 130-60-8">на плите до 130-60-8</option>
+                    <option value="поясной">поясной</option>
+                    <option value="рост на 100-50">рост на 100-50</option>
+                    <option value="рост на 120-60">рост на 120-60</option>
+                    <option value="сложный фон">сложный фон</option>
+                </select>
+            </div>
+            <div class="right-column">
+                <span id="result-portrait" class="result-display">0 грн</span>
+            </div>
+        </div>
+        <div class="position-row">
+            <div class="left-column">
+                <div class="checkbox-container">
+                    <label for="input-fio-dates">ФИО+даты:</label>
+                    <input type="checkbox" id="input-fio-dates"> 
+                </div>
+            </div>
+            <div class="right-column">
+                <span id="result-fio-dates" class="result-display">0 грн</span>
+            </div>
+        </div>
+        <div class="position-row">
+            <div class="left-column">
+                <div class="checkbox-container">
+                    <label for="input-epitaph">Эпитафия:</label>
+                    <input type="checkbox" id="input-epitaph"> 
+                </div>
+            </div>
+            <div class="right-column">
+                <span id="result-epitaph" class="result-display">0 грн</span>
+            </div>
+        </div>
+        <div class="total-section">
+            <span class="total-label">Общая стоимость:</span>
+            <span id="total-cost-amount">0 грн</span>
+        </div>
+        
+    </div>
+
+    <script>
+        // *** ФИНАЛЬНЕ ВИПРАВЛЕННЯ ДЛЯ iOS: Весь код обгорнуто в DOMContentLoaded ***
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ ДЛЯ РЕЖИМА РАСЧЕТА ---
+            let calculationMode = 'exact'; // 'exact' (точный) или 'round' (с округлением)
+
+            // --- КОНСТАНТЫ ЦЕН ---
+
+            const DELIVERY_PRICES = {
+                "Мешковка": 0, "Балабановка": 1700, "Жукова": 1700, "Матвеевка": 2300, 
+                "Терновка": 2300, "Варваровка": 2300, "Капустина балка": 2500, 
+                "Лиманы": 3500, "Полигон": 1700, "Радсад": 2500, "Баловное": 2800
+            };
+            const PRICE_PER_KM = 70; 
+
+            const PODRAMNIK_PRICES = {
+                "без плитки": 4000, "облиц керамика верх": 4500, "облиц керамика верх+торцы": 6000,
+                "без окна облиц керамика верх+торцы": 7500, "облиц гранит черный верх": 7000, 
+                "облиц гранит черный верх+торцы": 13000, "облицовка гранит зеленый верх+торцы": 15000
+            };
+            
+            const BALKI_PRICE = 1200; 
+            const OTVERSTIA_PRICE = 1000;
+            
+            const PODRAMNIK_INSTALL_PRICES = {
+                "без плитки": 1800,
+                "с керамической плиткой": 1800,
+                "с гранитной плиткой": 2800
+            };
+            
+            // КОНСТАНТА ЦЕНЫ УСТАНОВКИ ПАМЯТНИКА
+            const MONUMENT_INSTALL_PRICES = {
+                "до 110-50-8": { cost: 4500, display: '4500.00 грн' },
+                "до 130-60-8": { cost: 5500, display: '5500.00 грн' },
+                "до 140-70-8 на фундамент": { cost: 7000, display: '7000.00 грн (Договорная)' },
+                "гранитного комплекса": { cost: 8000, display: '8000.00 грн (Договорная)' },
+                "произведённые работы": { cost: 5500, display: '5500.00 грн' }
+            };
+
+            const FORMWORK_PRICES = {
+                "0.2": 6000, 
+                "0.1": 5000  
+            };
+            
+            const SHUBA_PRICE = 600;
+            const SHTUKATURKA_PRICE = 500;
+            
+            const GRANIT_PRICES = {
+                "Букинский чёрный": 5000, "Покостовка серый": 4200,
+                "Токовский": 6000, "Лезник рыжий": 6000
+            };
+            
+            const CERAMIC_PRICES = {
+                "Грес чёрный": 2300, "Грес серый": 1500,
+                "Грес Покостовка": 1800, "Грес Капустянский": 1800
+            };
+
+            const GRANIT_WORK_PRICES = {
+                "Букинский чёрный": { top: 2500, side: 4000 },
+                "Покостовка серый": { top: 2500, side: 4000 },
+                "Токовский": { top: 2500, side: 4000 },
+                "Лезник рыжий": { top: 2500, side: 4000 },
+            };
+            
+            const CERAMIC_WORK_PRICES = {
+                "Грес чёрный": { top: 2000, side: 3500 },
+                "Грес серый": { top: 2000, side: 3500 },
+                "Грес Покостовка": { top: 2000, side: 3500 },
+                "Грес Капустянский": { top: 2000, side: 3500 }
+            };
+            
+            const PLITA_PRICES = {
+                "60-60-5": 5800, "80-40-5": 5800, "100-50-5": 7500, 
+                "100-60-5": 7800, "120-60-5": 11000, "130-60-5": 13000,
+                "100-30-8": 6800, "60-60-8": 6500, "80-40-8": 6500, 
+                "100-50-8": 8800, "100-60-8": 9900, "120-60-8": 13500, 
+                "130-60-8": 15600, "140-60-8": 18600, "150-60-8": 20400, 
+                "160-60-8": 25200, "100-70-8": 15600, "120-70-8": 21600, 
+                "130-70-8": 25200, "140-70-8": 30000, "150-70-8": 32400,
+                "160-70-8": 'Договорная', "170-70-8": 'Договорная', 
+                "120-80-8": 25200, "130-80-8": 30000, "140-80-8": 37200, 
+                "150-80-8": 49200,
+                "150-120-8": 'Договорная', "180-90-8": 'Договорная', "200-100-8": 'Договорная'
+            };
+
+            const TUMBA_PRICES = {
+                "50-20-15": 4200, 
+                "60-20-15": 4600, 
+                "70-20-15": 5400, 
+                "70-20-20": 5900, 
+                "80-20-20": 6500, 
+                "100-20-20": 9500, 
+                "120-20-20": 11700, 
+                "70-30-20": 9500
+            };
+            
+            const PORTRAIT_PRICES = {
+                "на плите до 130-60-8": { cost: 3500, type: 'fixed' },
+                "поясной": { cost: 5000, type: 'fixed' },
+                "рост на 100-50": { cost: 7500, type: 'min' }, // 'от' цена
+                "рост на 120-60": { cost: 8500, type: 'min' }, // 'от' цена
+                "сложный фон": { cost: 0, type: 'contract' } // 'Договорная'
+            };
+            
+            const FIO_DATES_PRICE = 1500;
+            
+            const EPITAPH_PRICE = 1000;
+
+
+            // --- ФУНКЦИИ РАСЧЕТА ---
+
+            /**
+             * ХЕЛПЕР: Округляет число в большую сторону до сотых (0.01).
+             */
+            function roundUpToNearestHundreth(num) {
+                return Math.ceil(num * 100) / 100;
+            }
+
+            /**
+             * ХЕЛПЕР: Извлекает и перемножает первые два числа из строки (Д*Ш).
+             * Применяет округление, если calculationMode == 'round'.
+             */
+            function getAreaFromInput(inputString) {
+                // Исправление для iOS: Сначала заменяем запятую на точку, чтобы parseFloat работал корректно.
+                const cleanedString = inputString.replace(/,/g, '.').replace(/[^\d\.\s]/g, '');
+                const matches = cleanedString.match(/(\d+\.?\d*)/g);
+                
+                if (matches && matches.length >= 2) {
+                    let num1 = parseFloat(matches[0]);
+                    let num2 = parseFloat(matches[1]);
+                    let area = num1 * num2;
+                    
+                    if (calculationMode === 'round') {
+                        // Округляем в большую сторону до сотых
+                        num1 = roundUpToNearestHundreth(num1);
+                        num2 = roundUpToNearestHundreth(num2);
+                        area = roundUpToNearestHundreth(area); 
+                    }
+                    
+                    if (!isNaN(num1) && !isNaN(num2)) {
+                        // Возвращаем [Длина, Ширина, Площадь]
+                        return [num1, num2, area]; 
+                    }
+                }
+                return [0, 0, 0]; 
+            }
+
+            // 1. Расчет БАЗОВОЙ стоимости доставки
+            function calculateBaseDeliveryCost(locationOrKm) {
+                const cleanInput = locationOrKm.trim();
+                if (DELIVERY_PRICES.hasOwnProperty(cleanInput)) {
+                    return DELIVERY_PRICES[cleanInput];
+                }
+                
+                // ИСПРАВЛЕНИЕ ДЛЯ iOS/Android: Регулярное выражение теперь ищет число,
+                // допуская как запятую (,), так и точку (.) в качестве разделителя.
+                const kmMatch = cleanInput.match(/(\d+[,.]?\d*)/); 
+                if (kmMatch) {
+                    // Принудительная замена запятых на точки для корректного parseFloat.
+                    const numStr = kmMatch[0].replace(',', '.'); 
+                    const km = parseFloat(numStr);
+                    
+                    if (!isNaN(km) && km > 0) {
+                        return km * PRICE_PER_KM;
+                    }
+                }
+                return 0;
+            }
+
+            // 2. Расчет стоимости подрамника
+            function calculatePodramnikCost(option) {
+                const cleanOption = option.trim();
+                if (PODRAMNIK_PRICES.hasOwnProperty(cleanOption)) {
+                    return PODRAMNIK_PRICES[cleanOption];
+                }
+                return 0;
+            }
+
+            // 3. Расчет стоимости балок
+            function calculateBalkiCost(isChecked) {
+                return isChecked ? BALKI_PRICE : 0;
+            }
+            
+            // 4. Расчет стоимости отверстий
+            function calculateOtverstiaCost(isChecked) {
+                return isChecked ? OTVERSTIA_PRICE : 0;
+            }
+
+            // 5. Расчет стоимости установки подрамника
+            function calculatePodramnikInstallCost(option) {
+                const cleanOption = option.trim();
+                if (PODRAMNIK_INSTALL_PRICES.hasOwnProperty(cleanOption)) {
+                    return PODRAMNIK_INSTALL_PRICES[cleanOption];
+                }
+                return 0;
+            }
+            
+            // 6. Расчет стоимости установки памятника
+            function calculateMonumentInstallCost(option) {
+                const cleanOption = option.trim();
+                const result = MONUMENT_INSTALL_PRICES[cleanOption];
+                
+                if (result) {
+                    const isContract = result.display.includes('(Договорная)');
+                    const priceText = result.cost.toFixed(2) + ' грн'; 
+                    
+                    return { 
+                        cost: result.cost, 
+                        priceDisplay: priceText, 
+                        isContract: isContract 
+                    };
+                }
+                return { cost: 0, priceDisplay: '0 грн', isContract: false };
+            }
+
+
+            // 7. Расчет данных опалубки 
+            function calculateFormworkData(heightStr, sizeStr, windowStr) {
+                const [sizeLength, sizeWidth, grossArea] = getAreaFromInput(sizeStr);
+                const [, , windowArea] = getAreaFromInput(windowStr); 
+                
+                let netArea = grossArea - windowArea;
+                if (netArea < 0) netArea = 0; 
+                
+                const cleanHeight = heightStr.replace(',', '.');
+                let height = 0;
+                let pricePerSqMeter = 0;
+                
+                if (cleanHeight.includes("0.2")) {
+                    height = 0.2;
+                    pricePerSqMeter = FORMWORK_PRICES["0.2"];
+                } else if (cleanHeight.includes("0.1")) {
+                    height = 0.1;
+                    pricePerSqMeter = FORMWORK_PRICES["0.1"];
+                }
+
+                let finalNetArea = netArea;
+                let finalHeight = height;
+                
+                if (calculationMode === 'round') {
+                    finalNetArea = roundUpToNearestHundreth(netArea);
+                    finalHeight = roundUpToNearestHundreth(height);
+                }
+                
+                return {
+                    cost: finalNetArea * pricePerSqMeter, 
+                    height: finalHeight,         
+                    sizeLength: sizeLength, 
+                    sizeWidth: sizeWidth,   
+                    grossArea: grossArea,   
+                    windowArea: windowArea   
+                };
+            }
+            
+            // 8. Расчет стоимости Шубы/Штукатурки
+            function calculateShubaShtukaturkaCost(formworkData, option) {
+                const cleanOption = option.trim();
+                const { sizeLength, sizeWidth, height } = formworkData; 
+
+                if (sizeLength === 0 || sizeWidth === 0 || height === 0 || cleanOption === "") {
+                    return 0;
+                }
+
+                // Площадь торцов: (Длина + Ширина) * 2 * Высота
+                const sideSurfaceArea = (sizeLength + sizeWidth) * 2 * height;
+
+                let price = 0;
+                if (cleanOption === "Шуба") {
+                    price = SHUBA_PRICE; 
+                } else if (cleanOption === "Штукатурка") {
+                    price = SHTUKATURKA_PRICE; 
+                }
+
+                let finalSideSurfaceArea = sideSurfaceArea;
+                if (calculationMode === 'round') {
+                    finalSideSurfaceArea = roundUpToNearestHundreth(sideSurfaceArea);
+                }
+                
+                return finalSideSurfaceArea * price;
+            }
+
+            // 9. Расчет стоимости гранитной плитки (Материал)
+            function calculateGranitCost(formworkData, granitTopType, granitSideType) {
+                const result = { cost: 0, topArea: 0, sideArea: 0 };
+                
+                const priceTop = GRANIT_PRICES[granitTopType.trim()] || 0;
+                const priceSide = GRANIT_PRICES[granitSideType.trim()] || 0;
+                
+                // Площадь Верха (Материал Гранит): (Д*Ш - Окно Д*Ш) + 0.1
+                let topArea = formworkData.grossArea - formworkData.windowArea + 0.1;
+                result.topArea = Math.max(0, topArea);
+                
+                // Площадь Торца (Материал Гранит): (Д + Ш) * 2 * Высота
+                let sideArea = (formworkData.sizeLength + formworkData.sizeWidth) * 2 * formworkData.height;
+                result.sideArea = Math.max(0, sideArea);
+
+                if (calculationMode === 'round') {
+                    result.topArea = roundUpToNearestHundreth(result.topArea);
+                    result.sideArea = roundUpToNearestHundreth(result.sideArea);
+                }
+
+                result.cost = (result.topArea * priceTop) + (result.sideArea * priceSide);
+                return result;
+            }
+
+            // 10. Расчет стоимости работы по гранитной плитке
+            function calculateGranitWorkCost(formworkData, granitWorkTopType, granitWorkSideType) {
+                const result = { cost: 0, topArea: 0, sideArea: 0 };
+                
+                const cleanTopType = granitWorkTopType.trim();
+                const cleanSideType = granitWorkSideType.trim();
+
+                const priceTopWork = GRANIT_WORK_PRICES[cleanTopType] ? GRANIT_WORK_PRICES[cleanTopType].top : 0;
+                const priceSideWork = GRANIT_WORK_PRICES[cleanSideType] ? GRANIT_WORK_PRICES[cleanSideType].side : 0;
+                
+                // Площадь Верха (Работа): Общая площадь Д*Ш - Площадь окна Д*Ш 
+                let topArea = formworkData.grossArea - formworkData.windowArea;
+                result.topArea = Math.max(0, topArea);
+                
+                // Площадь Торца (Работа): (Длина + Ширина) * 2 * Высота
+                let sideArea = (formworkData.sizeLength + formworkData.sizeWidth) * 2 * formworkData.height;
+                result.sideArea = Math.max(0, sideArea);
+
+                if (calculationMode === 'round') {
+                    result.topArea = roundUpToNearestHundreth(result.topArea);
+                    result.sideArea = roundUpToNearestHundreth(result.sideArea);
+                }
+
+                result.cost = (result.topArea * priceTopWork) + (result.sideArea * priceSideWork);
+                return result;
+            }
+            
+            // 11. Расчет стоимости керамической плитки (Материал)
+            function calculateCeramicCost(formworkData, ceramicTopType, ceramicSideType) {
+                const result = { cost: 0, topArea: 0, sideArea: 0 };
+                
+                const priceTop = CERAMIC_PRICES[ceramicTopType.trim()] || 0;
+                const priceSide = CERAMIC_PRICES[ceramicSideType.trim()] || 0;
+                
+                // Площадь Верха (Материал Керамика): (Д*Ш - Окно Д*Ш) + 0.27
+                let topArea = formworkData.grossArea - formworkData.windowArea + 0.27;
+                result.topArea = Math.max(0, topArea);
+                
+                // Площадь Торца (Материал Керамика): (Д + Ш) * 2 * Высота
+                let sideArea = (formworkData.sizeLength + formworkData.sizeWidth) * 2 * formworkData.height;
+                result.sideArea = Math.max(0, sideArea);
+
+                if (calculationMode === 'round') {
+                    result.topArea = roundUpToNearestHundreth(result.topArea);
+                    result.sideArea = roundUpToNearestHundreth(result.sideArea);
+                }
+
+                result.cost = (result.topArea * priceTop) + (result.sideArea * priceSide);
+                return result;
+            }
+
+            // 12. Расчет стоимости работы по керамической плитке
+            function calculateCeramicWorkCost(formworkData, ceramicWorkTopType, ceramicWorkSideType) {
+                const result = { cost: 0, topArea: 0, sideArea: 0 };
+                
+                const cleanTopType = ceramicWorkTopType.trim();
+                const cleanSideType = ceramicWorkSideType.trim();
+
+                const priceTopWork = CERAMIC_WORK_PRICES[cleanTopType] ? CERAMIC_WORK_PRICES[cleanTopType].top : 0;
+                const priceSideWork = CERAMIC_WORK_PRICES[cleanSideType] ? CERAMIC_WORK_PRICES[cleanSideType].side : 0;
+                
+                // Площадь Верха (Работа): Общая площадь Д*Ш - Площадь окна Д*Ш 
+                let topArea = formworkData.grossArea - formworkData.windowArea;
+                result.topArea = Math.max(0, topArea);
+                
+                // Площадь Торца (Работа): (Длина + Ширина) * 2 * Высота
+                let sideArea = (formworkData.sizeLength + formworkData.sizeWidth) * 2 * formworkData.height;
+                result.sideArea = Math.max(0, sideArea);
+
+                if (calculationMode === 'round') {
+                    result.topArea = roundUpToNearestHundreth(result.topArea);
+                    result.sideArea = roundUpToNearestHundreth(result.sideArea);
+                }
+
+                result.cost = (result.topArea * priceTopWork) + (result.sideArea * priceSideWork);
+                return result;
+            }
+            
+            // 13. Расчет стоимости плиты
+            function calculatePlitaCost(option) {
+                const cleanOption = option.trim();
+                const price = PLITA_PRICES[cleanOption];
+                
+                if (typeof price === 'number') {
+                    return { cost: price, display: price.toFixed(2) + ' грн' };
+                } else if (price === 'Договорная') {
+                    return { cost: 0, display: 'Договорная' }; 
+                }
+                return { cost: 0, display: '0 грн' };
+            }
+            
+            // 14. Расчет стоимости тумбы
+            function calculateTumbaCost(option) {
+                const cleanOption = option.trim();
+                const price = TUMBA_PRICES[cleanOption];
+                
+                if (typeof price === 'number') {
+                    return { cost: price, display: price.toFixed(2) + ' грн' };
+                }
+                return { cost: 0, display: '0 грн' };
+            }
+            
+            // 15. Расчет стоимости портрета
+            function calculatePortraitCost(option) {
+                const cleanOption = option.trim();
+                const result = PORTRAIT_PRICES[cleanOption];
+
+                if (result) {
+                    if (result.type === 'fixed') {
+                        return { cost: result.cost, display: result.cost.toFixed(2) + ' грн' };
+                    } else if (result.type === 'min') {
+                        return { cost: result.cost, display: `от ${result.cost.toFixed(2)} грн` };
+                    } else if (result.type === 'contract') {
+                        return { cost: 0, display: 'Договорная' };
+                    }
+                }
+                return { cost: 0, display: '0 грн' };
+            }
+            
+            // 16. Расчет стоимости ФИО+даты
+            function calculateFioDatesCost(isChecked) {
+                return isChecked ? FIO_DATES_PRICE : 0;
+            }
+            
+            // 17. Расчет стоимости Эпитафии
+            function calculateEpitaphCost(isChecked) {
+                return isChecked ? EPITAPH_PRICE : 0;
+            }
+
+
+            // 18. Основная функция расчета и обновления всех значений
+            function updateCalculations() {
+                // --- Получение данных ---
+                const deliveryInput = document.getElementById('input-delivery').value;
+                const podramnikInput = document.getElementById('input-podramnik').value;
+                const balkiChecked = document.getElementById('input-balki').checked;
+                const otverstiaChecked = document.getElementById('input-otverstia').checked;
+                const podramnikInstallInput = document.getElementById('input-podramnik-install').value; 
+                const monumentInstallInput = document.getElementById('input-monument-install').value; 
+                const formworkHeightInput = document.getElementById('input-formwork-height').value;
+                const formworkSizeInput = document.getElementById('input-formwork-size').value;
+                const formworkWindowInput = document.getElementById('input-formwork-window').value;
+                const shubaShtukaturkaInput = document.getElementById('input-shuba-shtukaturka').value; 
+                const granitTopInput = document.getElementById('input-granit-top').value;
+                const granitSideInput = document.getElementById('input-granit-side').value;
+                const granitWorkTopInput = document.getElementById('input-granit-work-top').value; 
+                const granitWorkSideInput = document.getElementById('input-granit-work-side').value; 
+                const ceramicTopInput = document.getElementById('input-ceramic-top').value;
+                const ceramicSideInput = document.getElementById('input-ceramic-side').value;
+                const ceramicWorkTopInput = document.getElementById('input-ceramic-work-top').value; 
+                const ceramicWorkSideInput = document.getElementById('input-ceramic-work-side').value; 
+                const plitaInput = document.getElementById('input-plita').value; 
+                const tumbaInput = document.getElementById('input-tumba').value; 
+                const portraitInput = document.getElementById('input-portrait').value; 
+                const fioDatesChecked = document.getElementById('input-fio-dates').checked; 
+                const epitaphChecked = document.getElementById('input-epitaph').checked; 
+
+                const multiplier = parseFloat(document.getElementById('delivery-multiplier').value) || 1; 
+
+                
+                // --- Расчеты ---
+                const baseCostDelivery = calculateBaseDeliveryCost(deliveryInput);
+                const finalCostDelivery = baseCostDelivery * multiplier; 
+                const costPodramnik = calculatePodramnikCost(podramnikInput);
+                const costBalki = calculateBalkiCost(balkiChecked); 
+                const costOtverstia = calculateOtverstiaCost(otverstiaChecked); 
+                const costPodramnikInstall = calculatePodramnikInstallCost(podramnikInstallInput); 
+                
+                const monumentInstallResult = calculateMonumentInstallCost(monumentInstallInput); 
+                const costMonumentInstall = monumentInstallResult.cost; 
+                
+                // Данные опалубки
+                const formworkData = calculateFormworkData(formworkHeightInput, formworkSizeInput, formworkWindowInput);
+                const costFormwork = formworkData.cost;
+                
+                // Стоимость Шубы/Штукатурки
+                const costShubaShtukaturka = calculateShubaShtukaturkaCost(formworkData, shubaShtukaturkaInput); 
+                
+                // Стоимость материала Гранит
+                const granitResult = calculateGranitCost(formworkData, granitTopInput, granitSideInput);
+                const costGranit = granitResult.cost; 
+                
+                // Стоимость работы Гранит
+                const granitWorkResult = calculateGranitWorkCost(formworkData, granitWorkTopInput, granitWorkSideInput);
+                const costGranitWork = granitWorkResult.cost; 
+
+                // Стоимость материала Керамика
+                const ceramicResult = calculateCeramicCost(formworkData, ceramicTopInput, ceramicSideInput);
+                const costCeramic = ceramicResult.cost;
+
+                // Стоимость работы Керамика
+                const ceramicWorkResult = calculateCeramicWorkCost(formworkData, ceramicWorkTopInput, ceramicWorkSideInput);
+                const costCeramicWork = ceramicWorkResult.cost;
+                
+                // Стоимость Плиты
+                const plitaResult = calculatePlitaCost(plitaInput); 
+                const costPlita = plitaResult.cost;
+                
+                // Стоимость Тумбы
+                const tumbaResult = calculateTumbaCost(tumbaInput); 
+                const costTumba = tumbaResult.cost;
+                
+                // Стоимость Портрета
+                const portraitResult = calculatePortraitCost(portraitInput); 
+                const costPortrait = portraitResult.cost;
+                
+                // Стоимость ФИО+даты
+                const costFioDates = calculateFioDatesCost(fioDatesChecked);
+                
+                // Стоимость Эпитафии
+                const costEpitaph = calculateEpitaphCost(epitaphChecked);
+                
+                // Общая стоимость 
+                const grandTotalCost = finalCostDelivery + costPodramnik + costBalki + costOtverstia + costPodramnikInstall + costMonumentInstall + costFormwork + costShubaShtukaturka + costGranit + costGranitWork + costCeramic + costCeramicWork + costPlita + costTumba + costPortrait + costFioDates + costEpitaph; 
+                
+                // --- Обновление HTML ---
+                
+                document.getElementById('result-delivery').textContent = finalCostDelivery.toFixed(2) + ' грн';
+                document.getElementById('result-podramnik').textContent = costPodramnik.toFixed(2) + ' грн';
+                document.getElementById('result-balki').textContent = costBalki.toFixed(2) + ' грн'; 
+                document.getElementById('result-otverstia').textContent = costOtverstia.toFixed(2) + ' грн'; 
+                document.getElementById('result-podramnik-install').textContent = costPodramnikInstall.toFixed(2) + ' грн'; 
+                
+                // Обновление Установки памятника
+                const monumentDisplayElement = document.getElementById('result-monument-install');
+                const monumentSubtextElement = document.getElementById('result-monument-install-subtext');
+
+                monumentDisplayElement.textContent = monumentInstallResult.priceDisplay;
+                
+                if (monumentInstallResult.isContract) {
+                    monumentSubtextElement.textContent = '(Договорная)';
+                    monumentSubtextElement.classList.add('contract-subtext');
+                    monumentDisplayElement.classList.add('contract-price'); 
+                } else {
+                    monumentSubtextElement.textContent = '';
+                    monumentSubtextElement.classList.remove('contract-subtext');
+                    monumentDisplayElement.classList.remove('contract-price');
+                }
+                
+                document.getElementById('result-formwork').textContent = costFormwork.toFixed(2) + ' грн';
+                document.getElementById('result-shuba-shtukaturka').textContent = costShubaShtukaturka.toFixed(2) + ' грн'; 
+                
+                // Обновление гранита (материал)
+                document.getElementById('result-granit').textContent = costGranit.toFixed(2) + ' грн';
+                document.getElementById('result-granit-detail').textContent = 
+                    `Верх: ${granitResult.topArea.toFixed(2)} м², Торец: ${granitResult.sideArea.toFixed(2)} м²`;
+
+                // Обновление работы по граниту
+                document.getElementById('result-granit-work').textContent = costGranitWork.toFixed(2) + ' грн';
+                document.getElementById('result-granit-work-detail').textContent = 
+                    `Верх: ${granitWorkResult.topArea.toFixed(2)} м², Торец: ${granitWorkResult.sideArea.toFixed(2)} м²`;
+                
+                // Обновление керамики (материал)
+                document.getElementById('result-ceramic').textContent = costCeramic.toFixed(2) + ' грн';
+                document.getElementById('result-ceramic-detail').textContent = 
+                    `Верх: ${ceramicResult.topArea.toFixed(2)} м², Торец: ${ceramicResult.sideArea.toFixed(2)} м²`;
+
+                // Обновление работы по керамике
+                document.getElementById('result-ceramic-work').textContent = costCeramicWork.toFixed(2) + ' грн';
+                document.getElementById('result-ceramic-work-detail').textContent = 
+                    `Верх: ${ceramicWorkResult.topArea.toFixed(2)} м², Торец: ${ceramicWorkResult.sideArea.toFixed(2)} м²`;
+
+                // Обновление Плиты
+                const plitaDisplayElement = document.getElementById('result-plita');
+                plitaDisplayElement.textContent = plitaResult.display;
+                if (plitaResult.display === 'Договорная') {
+                    plitaDisplayElement.classList.add('contract-price');
+                } else {
+                    plitaDisplayElement.classList.remove('contract-price');
+                }
+                
+                // Обновление Тумбы
+                document.getElementById('result-tumba').textContent = tumbaResult.display;
+
+                // Обновление Портрета
+                const portraitDisplayElement = document.getElementById('result-portrait');
+                portraitDisplayElement.textContent = portraitResult.display;
+                if (portraitResult.display.includes('от') || portraitResult.display === 'Договорная') {
+                    portraitDisplayElement.classList.add('contract-price');
+                } else {
+                    portraitDisplayElement.classList.remove('contract-price');
+                }
+                
+                // Обновление ФИО+даты
+                document.getElementById('result-fio-dates').textContent = costFioDates.toFixed(2) + ' грн';
+                
+                // Обновление Эпитафии
+                document.getElementById('result-epitaph').textContent = costEpitaph.toFixed(2) + ' грн';
+
+                document.getElementById('total-cost-amount').textContent = grandTotalCost.toFixed(2) + ' грн';
+            }
+
+            // 19. Установка множителя для доставки
+            function setDeliveryMultiplier(event) {
+                const targetButton = event.currentTarget;
+                const multiplier = targetButton.getAttribute('data-multiplier');
+                
+                document.getElementById('delivery-multiplier').value = multiplier;
+                
+                const buttons = document.querySelectorAll('.delivery-multiplier-buttons button');
+                buttons.forEach(btn => btn.classList.remove('active'));
+                
+                targetButton.classList.add('active');
+                
+                updateCalculations();
+            }
+            
+            // 20. Переключение режима расчета
+            function setCalculationMode(event) {
+                const newMode = event.currentTarget.getAttribute('data-mode');
+                
+                if (calculationMode === newMode) return; 
+
+                calculationMode = newMode;
+                
+                // Обновление активного класса для кнопок
+                document.querySelectorAll('.mode-buttons button').forEach(btn => btn.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+                
+                // Перезапуск всех расчетов с новым режимом
+                updateCalculations();
+            }
+
+            // --- ПРИВЯЗКА ФУНКЦИЙ К ПОЛЯМ ВВОДА И КНОПКАМ ---
+            
+            // 1. Привязка 'input' И 'change' для всех полей
+            const inputsToMonitor = [
+                'input-delivery', 
+                'input-podramnik',
+                'input-balki',
+                'input-otverstia',
+                'input-podramnik-install',
+                'input-monument-install',
+                'input-formwork-height', 
+                'input-formwork-size', 
+                'input-formwork-window',
+                'input-shuba-shtukaturka', 
+                'input-granit-top', 
+                'input-granit-side',
+                'input-granit-work-top', 
+                'input-granit-work-side',
+                'input-ceramic-top',
+                'input-ceramic-side',
+                'input-ceramic-work-top', 
+                'input-ceramic-work-side',
+                'input-plita', 
+                'input-tumba',
+                'input-portrait',
+                'input-fio-dates',
+                'input-epitaph'
+            ];
+            
+            inputsToMonitor.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    // 'change' для <select> и <input type="checkbox">, 'input' для <input type="text">
+                    element.addEventListener('input', updateCalculations); 
+                    element.addEventListener('change', updateCalculations); 
+                }
+            });
+
+            // 2. Привязка кнопок-множителей
+            document.querySelectorAll('.delivery-multiplier-buttons button').forEach(button => {
+                button.addEventListener('click', setDeliveryMultiplier);
+            });
+            
+            // 3. Привязка кнопок режима расчета
+            document.getElementById('btn-exact').addEventListener('click', setCalculationMode);
+            document.getElementById('btn-round').addEventListener('click', setCalculationMode);
+
+
+            // Первичный расчет при загрузке страницы (теперь безопасно внутри DOMContentLoaded)
+            updateCalculations();
+        });
+    </script>
+
+</body>
+</html>
