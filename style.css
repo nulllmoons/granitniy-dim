@@ -1,10 +1,11 @@
 body {
     font-family: Arial, sans-serif;
-    padding: 20px;
+    padding: 10px 0; /* Зменшено вертикальний padding, прибрано горизонтальний */
 }
 
 .container {
-    max-width: 600px;
+    width: 98%; /* ВИПРАВЛЕННЯ: Тепер контейнер займає 98% ширини екрана */
+    max-width: 600px; /* Обмеження залишено тільки для великих екранів */
     margin: 0 auto;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -16,23 +17,24 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start; 
-    padding: 10px 15px 0 15px; 
+    padding: 10px; /* Зменшено padding */
 }
 
 .header-section h1 {
     margin: 0;
-    font-size: 1.5em;
+    font-size: 1.3em; /* Зменшено розмір заголовка */
 }
 
 .mode-buttons button {
     display: block; 
-    width: 150px; 
+    width: 100px; /* Зменшено ширину кнопок */
     margin-bottom: 5px; 
-    padding: 8px;
+    padding: 6px; /* Зменшено padding */
     border: 1px solid #ccc;
     cursor: pointer;
     transition: background-color 0.2s;
     font-weight: bold;
+    font-size: 0.85em; /* Зменшено шрифт */
 }
 
 /* Стиль для активной кнопки режима */
@@ -59,24 +61,26 @@ body {
 .info-row {
     display: flex;
     background-color: #fffacd; 
-    padding: 15px;
+    padding: 10px; /* Зменшено padding */
     border-bottom: 1px solid #333;
+    flex-wrap: wrap; /* Дозволяє переносити на новий рядок на вузьких екранах */
 }
 
 .info-label {
     font-weight: bold;
     flex-shrink: 0; 
-    margin-right: 15px;
-    width: 180px; 
+    margin-right: 10px; /* Зменшено margin */
+    width: 140px; /* ЗМЕНШЕНО ШИРИНУ ПІДПИСУ */
+    font-size: 0.9em;
 }
 
 .info-input {
     flex-grow: 1; 
-    padding: 8px;
+    padding: 6px;
     border: 1px solid #dcdcdc;
     border-radius: 4px;
     box-sizing: border-box;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 /* ----- Стили для расчета (Доставка, Подрамник, Опалубка, Плитка, Работа) ----- */
@@ -85,9 +89,10 @@ body {
 .left-column {
     flex: 2; 
     background-color: #fffacd; 
-    padding: 15px;
+    padding: 10px; /* ЗМЕНШЕНО PADDING */
     display: flex;
     flex-direction: column; 
+    font-size: 0.9em; /* Зменшено загальний шрифт */
 }
 
 .position-label {
@@ -103,9 +108,9 @@ body {
     background-color: #ffcc00; 
     border: 1px solid #ffaa00;
     border-radius: 4px;
-    padding: 3px 6px;
-    margin-left: 5px;
-    font-size: 0.8em;
+    padding: 2px 5px; /* Зменшено padding */
+    margin-left: 3px; /* Зменшено margin */
+    font-size: 0.75em; /* Зменшено шрифт */
     cursor: pointer;
     transition: background-color 0.1s;
 }
@@ -124,7 +129,7 @@ body {
 /* Стили для групп полей */
 .formwork-group, .granit-group, .ceramic-group, .granit-work-group, .ceramic-work-group {
     border: 1px solid #e0e0e0; 
-    padding: 10px;
+    padding: 8px; /* Зменшено padding */
     margin-top: 5px;
     border-radius: 4px;
     background-color: #fff;
@@ -132,8 +137,8 @@ body {
 .formwork-group label, .granit-group label, .ceramic-group label, .granit-work-group label, .ceramic-work-group label {
     font-weight: normal; 
     display: block; 
-    margin-top: 8px;
-    font-size: 0.9em;
+    margin-top: 5px; /* Зменшено margin */
+    font-size: 0.85em; /* Зменшено шрифт */
 }
 .formwork-group input, .granit-group input, .ceramic-group input, .granit-work-group input, .ceramic-work-group input {
     margin-top: 2px;
@@ -142,11 +147,11 @@ body {
 
 .input-field, .select-field {
     width: 100%;
-    padding: 8px;
+    padding: 6px; /* Зменшено padding */
     border: 1px solid #dcdcdc;
     border-radius: 4px;
     box-sizing: border-box;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 /* Стиль для чекбокс-контейнера (Балки, Отверстия, ФИО+Даты, Эпитафия) */
@@ -154,34 +159,36 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 0; /* Отступ внутри колонки */
+    padding: 5px 0; /* Зменшено padding */
 }
 .checkbox-container label {
     font-weight: bold;
     margin: 0;
-    flex-grow: 1; /* Позволяет надписи занять доступное место */
+    flex-grow: 1; 
+    font-size: 0.9em;
 }
 .checkbox-container input[type="checkbox"] {
-    width: 20px; /* Увеличим размер чекбокса */
-    height: 20px;
+    width: 18px; /* Зменшено розмір чекбокса */
+    height: 18px;
     margin-right: 0;
     cursor: pointer;
-    flex-shrink: 0; /* Не позволяет чекбоксу сжиматься */
+    flex-shrink: 0; 
 }
 
 /* Правая сторона: Результат расчета (ГОЛУБОЙ) */
 .right-column {
     flex: 1; 
     background-color: #add8e6; 
-    padding: 15px;
+    padding: 10px; /* ЗМЕНШЕНО PADDING */
     display: flex;
     align-items: center; 
     justify-content: flex-end; 
     flex-direction: column; 
+    text-align: right;
 }
 
 .result-display {
-    font-size: 1.2em;
+    font-size: 1.1em; /* ЗМЕНШЕНО ШРИФТ */
     font-weight: bold;
     color: #000080; 
     white-space: nowrap; 
@@ -195,10 +202,10 @@ body {
 
 /* Детализация площади под стоимостью */
 .result-subtext {
-    font-size: 0.7em;
+    font-size: 0.65em; /* Зменшено шрифт */
     font-weight: normal;
     display: block;
-    color: #555; /* Дефолтный цвет для деталей площади */
+    color: #555; 
     text-align: right;
     margin-top: 3px;
 }
@@ -213,9 +220,9 @@ body {
 .total-section {
     display: flex;
     justify-content: flex-end; 
-    padding: 15px;
+    padding: 10px; /* Зменшено padding */
     background-color: #f0f0f0;
-    font-size: 1.3em;
+    font-size: 1.2em; /* Зменшено шрифт */
     font-weight: bold;
 }
 
