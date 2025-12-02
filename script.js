@@ -676,4 +676,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Первичный расчет при загрузке страницы (теперь безопасно внутри DOMContentLoaded)
     updateCalculations();
+
+    ```javascript
+// --- ДОДАТКОВА ЛОГІКА: Спроба примусового запуску музики ---
+    
+    const musicElement = document.getElementById('background-music');
+
+    function startMusic() {
+        if (musicElement) {
+            musicElement.play().catch(error => {
+                // Якщо запуск заблоковано, помилка ігнорується. 
+                // Ми залишаємось у рамках політики браузера.
+                console.log("Autoplay blocked:", error); 
+            });
+            // Видаляємо слухач, щоб функція не викликалася повторно.
+            document.removeEventListener('click', startMusic); 
+        }
+    }
+    
+    // Спроба запуску при завантаженні
+    startMusic(); 
+    
+    // Додаємо слухач для примусового запуску музики при першому кліку (якщо початковий запуск блоковано)
+    document.addEventListener('click', startMusic);
+
+// --- КІНЕЦЬ ДОДАТКОВОЇ ЛОГІКИ ---
+
+// Первичный расчет при загрузке страницы (теперь безопасно внутри DOMContentLoaded)
+updateCalculations();
 });
