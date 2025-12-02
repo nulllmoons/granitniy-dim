@@ -677,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Первичный расчет при загрузке страницы (теперь безопасно внутри DOMContentLoaded)
     updateCalculations();
 
-    ```javascript
+    
 // --- ДОДАТКОВА ЛОГІКА: Спроба примусового запуску музики ---
     
     const musicElement = document.getElementById('background-music');
