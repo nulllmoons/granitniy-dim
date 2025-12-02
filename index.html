@@ -14,6 +14,18 @@
         <source src="https://ia800200.us.archive.org/3/items/Musopen-01Beethoven-moonlight-1/Musopen-01Beethoven-moonlight-1.ogg" type="audio/ogg">
         Ваш браузер не підтримує аудіо елемент.
     </audio>
+    <script>
+    // Запуск воспроизведения через JavaScript
+    const music = document.getElementById('moonlight-audio');
+
+    // Важно: в Telegram Mini App, как и в браузерах, 
+    // воспроизведение должно быть инициировано действием пользователя (например, кликом).
+    document.getElementById('play-button').onclick = () => {
+        music.play().catch(error => {
+            console.log('Воспроизведение заблокировано браузером:', error);
+        });
+    };
+</script>
     <div class="container">
         
         <div class="header-section">
